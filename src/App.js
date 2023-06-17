@@ -1,5 +1,5 @@
 import React from "react";
-import Main from "./2-dars/Main";
+import Main from "./Takrorlash/Main";
 export default function App() {
   return (
     <>
