@@ -7,7 +7,7 @@
 .card {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 20px 100px;
+  padding: 0px 100px;
 }
 nav {
   background-color: chartreuse;
@@ -16,7 +16,7 @@ nav {
   padding: 20px;
   align-items: center;
   position: sticky;
-  top: 20px;
+  top: 0px;
   z-index: 1;
 }
 nav h1 {
@@ -142,4 +142,8 @@ td {
   font-size: 30px;
   color: red;
   cursor: pointer;
+}
+
+.soni{ 
+  margin: 0 15px;
 }

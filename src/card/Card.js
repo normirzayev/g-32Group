@@ -8,7 +8,7 @@ import rasm3 from "../img/cambg_7.jpg";
 import { MdDelete } from "react-icons/md";
 export default function Card() {
   const [modal, setModal] = useState(false);
-  const [data, setData] = useState([
+  const [data] = useState([
     { id: 0, rasm: rasm, nomi: "nomi", soni: 1, narx: 10, aksiya: 5 },
     { id: 1, rasm: rasm1, nomi: "lorem", soni: 1, narx: 28, aksiya: 12 },
     { id: 2, rasm: rasm3, nomi: "ipsum", soni: 1, narx: 32, aksiya: 14 },
@@ -17,7 +17,6 @@ export default function Card() {
     { id: 5, rasm: rasm1, nomi: "nomi", soni: 1, narx: 82, aksiya: 17 },
   ]);
   const [cart, setCart] = useState([]);
-
   let handleCart = (argument) => {
     if (cart.filter((item) => item.id === argument.id).length === 0) {
       setCart([...cart, argument]);
@@ -29,9 +28,26 @@ export default function Card() {
   // karzinkani ichidan bir mahsulot o'chirish
   function andleDeleteCart(parametr) {
     let confirm = window.confirm("o'chirishni hoxlaysizmi ?");
-    if(confirm) {
+    if (confirm) {
       setCart(cart.filter((item) => item.id !== parametr));
     }
+  }
+  // karzinkada plus minus funcsiyasini tuzish
+  function cartMinusFunc(item) {
+    setCart(
+      cart.map((elem) =>
+        elem.id === item.id && elem.soni > 1
+          ? { ...elem, soni: elem.soni - 1 }
+          : elem
+      )
+    );
+  }
+  function cartPlusFunc(id) {
+    setCart(
+      cart.map((elem) =>
+        elem.id === id ? { ...elem, soni: elem.soni + 1 } : elem
+      )
+    );
   }
   return (
     <div className="card">
@@ -87,9 +103,13 @@ export default function Card() {
                       <img src={item.rasm} alt={item.nomi} />
                     </td>
                     <td>
-                      <button>minus</button>
-                      <span>{item.soni}</span>
-                      <button>plus</button>
+                      <button onClick={() => cartMinusFunc(item)}>
+                        minus
+                      </button>
+                      <span className="soni">{item.soni}</span>
+                      <button onClick={() => cartPlusFunc(item.id)}>
+                        plus
+                      </button>
                     </td>
                     <td>
                       <del>{item.narx}$</del>
