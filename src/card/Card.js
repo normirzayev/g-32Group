@@ -10,6 +10,7 @@ import { FcLike } from "react-icons/fc";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 export default function Card() {
   const [modal, setModal] = useState(false);
+
   const [data, setData] = useState([
     {
       id: 0,
@@ -67,7 +68,7 @@ export default function Card() {
     },
   ]);
   const [cart, setCart] = useState([]);
-  const [tableBollean, setTableBollean] = useState(false);
+  const [tableBollean, setTableBollean] = useState(true);
   const [inputValue, setInputValue] = useState({
     id: "",
     nomi: "",
@@ -96,6 +97,7 @@ export default function Card() {
       [e.target.name]: e.target.value,
     });
   };
+
   const handleInputGetRasm = (e) => {
     console.log(e.target.files[0]);
     setInputValue({
@@ -104,17 +106,25 @@ export default function Card() {
     });
   };
 
-  // massivga inputdagi malumotlarni qo'shish
+  // massivga inputdagi malumotlarni qo'shish va tahrirlash function (funksiyasi)
   function handleSend(e) {
+    e.preventDefault();
     if (inputValue.nomi !== "") {
-      e.preventDefault();
-      setData([...data, { ...inputValue, id: new Date().getTime() }]);
+      if (inputValue.id === "") {
+        setData([...data, { ...inputValue, id: new Date().getTime() }]);
+      } else {
+        setData(
+          data.map((item) => (item.id === inputValue.id ? inputValue : item))
+        );
+      }
+
       setTableBollean(true);
       clearInputValue();
     } else {
       alert("nomini kiritng");
     }
   }
+
   let handleCart = (argument) => {
     if (cart.filter((item) => item.id === argument.id).length === 0) {
       setCart([...cart, argument]);
@@ -157,6 +167,12 @@ export default function Card() {
     );
   };
 
+  // edit (tahrirlash) qilish uchun
+  function handleEdit(elem) {
+    setInputValue(elem);
+    setTableBollean(false);
+  }
+
   return (
     <div className="card">
       <nav>
@@ -197,6 +213,7 @@ export default function Card() {
                   <del>{elem.narx}$</del>
                   {(elem.narx - (elem.narx / 100) * elem.aksiya).toFixed(2)}$
                 </div>
+                <button onClick={() => handleEdit(elem)}> edit </button>
                 <button onClick={() => handleCart(elem)}> add to card </button>
               </div>
             </div>
@@ -209,18 +226,21 @@ export default function Card() {
             placeholder="nomi"
             onChange={handleInputGetValue}
             name="nomi"
+            value={inputValue.nomi}
           />
           <input
             type="text"
             placeholder="aksiya"
             onChange={handleInputGetValue}
             name="aksiya"
+            value={inputValue.aksiya}
           />
           <input
             type="text"
             placeholder="narxi"
             onChange={handleInputGetValue}
             name="narx"
+            value={inputValue.narx}
           />
           <input type="file" onChange={handleInputGetRasm} />
           <button type="submit">send</button>
