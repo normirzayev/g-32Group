@@ -8,6 +8,9 @@ import rasm3 from "../img/cambg_7.jpg";
 import { MdDelete } from "react-icons/md";
 import { FcLike } from "react-icons/fc";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
+import Swal from "sweetalert2";
+import { Button } from "@mui/material";
+import CustomizedBadges from "./Icon";
 export default function Card() {
   const [modal, setModal] = useState(false);
 
@@ -112,6 +115,13 @@ export default function Card() {
     if (inputValue.nomi !== "") {
       if (inputValue.id === "") {
         setData([...data, { ...inputValue, id: new Date().getTime() }]);
+        Swal.fire({
+          position: "top-end",
+          icon: "warning",
+          title: "Your work has been saved",
+          showConfirmButton: false,
+          timer: 1500,
+        });
       } else {
         setData(
           data.map((item) => (item.id === inputValue.id ? inputValue : item))
@@ -135,10 +145,21 @@ export default function Card() {
 
   // karzinkani ichidan bir mahsulot o'chirish
   function handleDeleteCart(parametr) {
-    let confirm = window.confirm("o'chirishni hoxlaysizmi ?");
-    if (confirm) {
-      setCart(cart.filter((item) => item.id !== parametr));
-    }
+    // let confirm = window.confirm("o'chirishni hoxlaysizmi ?");
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setCart(cart.filter((item) => item.id !== parametr));
+        Swal.fire("Deleted!", "Your file has been deleted.", "success");
+      }
+    });
   }
   // karzinkada plus minus funcsiyasini tuzish
   function cartMinusFunc(item) {
@@ -179,8 +200,7 @@ export default function Card() {
         <h1>logo</h1>
         <div className="flex">
           <button onClick={() => setModal(true)}>
-            <AiOutlineShoppingCart />
-            <span> {cart.length} </span>
+            <CustomizedBadges soni={cart?.length} />
           </button>
           <button>
             <FcLike />
@@ -189,12 +209,14 @@ export default function Card() {
         </div>
       </nav>
 
-      <button
+      <Button
         onClick={() => setTableBollean(!tableBollean)}
         className="changeBox"
+        variant="contained"
+        color="error"
       >
         {tableBollean ? "card" : "form"}
-      </button>
+      </Button>
 
       {tableBollean ? (
         <div className="boxer">
@@ -260,6 +282,7 @@ export default function Card() {
               <th>soni</th>
               <th>narxi</th>
               <th>aksiya</th>
+              <th>summa</th>
               <th>delete</th>
             </tr>
           </thead>
@@ -286,6 +309,12 @@ export default function Card() {
                       $
                     </td>
                     <td> {item.aksiya} </td>
+                    <td>
+                      {(item.narx - (item.narx / 100) * item.aksiya).toFixed(
+                        2
+                      ) * item.soni}{" "}
+                      $
+                    </td>
                     <td>
                       <button
                         className="btnDelete"
