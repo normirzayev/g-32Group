@@ -37,16 +37,49 @@ nav button {
   gap: 10px;
   align-items: center;
 }
-
+.boxerAndCategory {
+  display: flex;
+  gap: 20px;
+}
+.categoryBox {
+  width: 15%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 30px;
+}
+.categoryBox button {
+  padding: 10px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  transition: 0.3s ease;
+}
+.categoryBox button:active {
+  transform: scale(0.9);
+}
 .boxer {
+  width: calc(85% - 10px);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 25px;
   margin-top: 25px;
 }
+.btnActive {
+  background-color: red;
+  color: white;
+}
+.searchInput{ 
+  display: block;
+  font-size: 20px;
+  padding: 10px;
+  width: 50%;
+  margin: 10px auto;
+}
 .box {
-  width: calc(100% / 4 - 20px);
+  width: calc(100% / 3 - 20px);
   box-shadow: 0 0 10px 5px silver;
   text-align: center;
 }
@@ -179,7 +212,8 @@ form input {
   font-size: 20px;
   width: 100%;
 }
-button[type='submit'], .changeBox {
+button[type="submit"],
+.changeBox {
   background-color: green;
   border: none;
   outline: none;

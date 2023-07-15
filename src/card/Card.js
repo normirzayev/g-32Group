@@ -9,67 +9,80 @@ import { MdDelete } from "react-icons/md";
 import { FcLike } from "react-icons/fc";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import Swal from "sweetalert2";
-import { Button } from "@mui/material";
-import CustomizedBadges from "./Icon";
+import { Box, Button, Slider } from "@mui/material";
+import { FaShoppingCart } from "react-icons/fa";
 export default function Card() {
+  const [value, setValue] = React.useState([0, 100]);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   const [modal, setModal] = useState(false);
-
+  let btns = ["", "meva", "accessuar", "texnika", "poliz"];
+  let [filterText, setFilterText] = useState("");
+  let [search, setSearch] = useState("");
   const [data, setData] = useState([
     {
       id: 0,
       rasm: rasm,
-      nomi: "nomi",
+      nomi: "olma",
       soni: 1,
-      narx: 10,
+      narx: 100,
       aksiya: 5,
       like: false,
+      category: "meva",
     },
     {
       id: 1,
       rasm: rasm1,
-      nomi: "lorem",
+      nomi: "computer",
       soni: 1,
       narx: 28,
       aksiya: 12,
       like: false,
+      category: "texnika",
     },
     {
       id: 2,
       rasm: rasm3,
-      nomi: "ipsum",
+      nomi: "telefon",
       soni: 1,
       narx: 32,
       aksiya: 14,
       like: false,
+      category: "texnika",
     },
     {
       id: 3,
       rasm: rasm,
-      nomi: "name",
+      nomi: "airPods",
       soni: 1,
       narx: 75,
       aksiya: 5,
       like: false,
+      category: "accessuar",
     },
     {
       id: 4,
       rasm: rasm2,
-      nomi: "nomi",
+      nomi: "karam",
       soni: 1,
       narx: 41,
       aksiya: 2,
       like: false,
+      category: "poliz",
     },
     {
       id: 5,
       rasm: rasm1,
-      nomi: "nomi",
+      nomi: "tarvuz",
       soni: 1,
       narx: 82,
       aksiya: 17,
       like: false,
+      category: "poliz",
     },
   ]);
+  let [filterData, setFilteData] = useState(data);
   const [cart, setCart] = useState([]);
   const [tableBollean, setTableBollean] = useState(true);
   const [inputValue, setInputValue] = useState({
@@ -80,6 +93,7 @@ export default function Card() {
     soni: 1,
     aksiya: "",
     narx: "",
+    category: "",
   });
 
   const clearInputValue = () => {
@@ -91,6 +105,7 @@ export default function Card() {
       soni: 1,
       aksiya: "",
       narx: "",
+      category: "",
     });
   };
 
@@ -117,7 +132,7 @@ export default function Card() {
         setData([...data, { ...inputValue, id: new Date().getTime() }]);
         Swal.fire({
           position: "top-end",
-          icon: "warning",
+          icon: "success",
           title: "Your work has been saved",
           showConfirmButton: false,
           timer: 1500,
@@ -193,14 +208,14 @@ export default function Card() {
     setInputValue(elem);
     setTableBollean(false);
   }
-
   return (
     <div className="card">
       <nav>
         <h1>logo</h1>
         <div className="flex">
           <button onClick={() => setModal(true)}>
-            <CustomizedBadges soni={cart?.length} />
+            <FaShoppingCart />
+            {cart?.length}
           </button>
           <button>
             <FcLike />
@@ -208,7 +223,17 @@ export default function Card() {
           </button>
         </div>
       </nav>
-
+      <div>
+        <input
+          type="search"
+          placeholder="search..."
+          className="searchInput"
+          onChange={(e) => {
+            setSearch(e.target.value);
+            console.log(e.target.value);
+          }}
+        />
+      </div>
       <Button
         onClick={() => setTableBollean(!tableBollean)}
         className="changeBox"
@@ -219,27 +244,101 @@ export default function Card() {
       </Button>
 
       {tableBollean ? (
-        <div className="boxer">
-          {data.map((elem, index) => (
-            <div className="box" key={elem.id}>
-              <figure>
-                <span> {elem.aksiya}% </span>
-                <span className="like" onClick={() => handleLike(elem.id)}>
-                  {elem.like ? <AiFillLike /> : <AiOutlineLike />}
-                </span>
-                <img src={elem.rasm} alt={elem.nomi} />
-              </figure>
-              <div className="boxText">
-                <h1>{elem.nomi}</h1>
-                <div className="narx">
-                  <del>{elem.narx}$</del>
-                  {(elem.narx - (elem.narx / 100) * elem.aksiya).toFixed(2)}$
-                </div>
-                <button onClick={() => handleEdit(elem)}> edit </button>
-                <button onClick={() => handleCart(elem)}> add to card </button>
-              </div>
+        <div className="boxerAndCategory">
+          <div className="categoryBox">
+            {btns.map((btn) => {
+              return (
+                <button
+                  key={btn}
+                  onClick={() => setFilterText(btn)}
+                  className={btn === filterText ? "btnActive" : ""}
+                >
+                  {btn === "" ? "All" : btn.toUpperCase()}
+                </button>
+              );
+            })}
+            <div>
+              <Box sx={{ width: "100%" }}>
+                <Slider
+                  value={value}
+                  onChange={handleChange}
+                  valueLabelDisplay="auto"
+                  min={0}
+                  max={100}
+                  // getAriaLabel={() => "Temperature range"}
+                  // getAriaValueText={valuetext}
+                />
+              </Box>
             </div>
-          ))}
+          </div>
+          <div className="boxer">
+            {filterData.filter((e) => {
+              if (
+                e?.category.includes(filterText) &&
+                value[0] < e.narx &&
+                e.narx <= value[1]
+              ) {
+                return e;
+              }
+            }).length > 0 ? (
+              filterData
+                .filter((item) => {
+                  if (search === "") {
+                    return item;
+                  } else if (
+                    item?.nomi
+                      .trim()
+                      .toLowerCase()
+                      .includes(search.trim().toLowerCase()) ||
+                    item?.narx.toString().trim().includes(search.trim())
+                  ) {
+                    return item;
+                  }
+                })
+                .filter((e) => {
+                  if (
+                    e?.category.includes(filterText) &&
+                    value[0] < e.narx &&
+                    e.narx <= value[1]
+                  ) {
+                    return e;
+                  }
+                })
+                .map((elem, index) => (
+                  <div className="box" key={elem.id}>
+                    <figure>
+                      <span> {elem.aksiya}% </span>
+                      <span
+                        className="like"
+                        onClick={() => handleLike(elem.id)}
+                      >
+                        {elem.like ? <AiFillLike /> : <AiOutlineLike />}
+                      </span>
+                      <img src={elem.rasm} alt={elem.nomi} />
+                    </figure>
+                    <div className="boxText">
+                      <h1>{elem.nomi}</h1>
+                      <div className="narx">
+                        <del>{elem.narx}$</del>
+                        {(elem.narx - (elem.narx / 100) * elem.aksiya).toFixed(
+                          2
+                        )}
+                        $
+                      </div>
+                      <div>
+                        category: <b>{elem.category}</b>
+                      </div>
+                      <button onClick={() => handleEdit(elem)}> edit </button>
+                      <button onClick={() => handleCart(elem)}>
+                        add to card
+                      </button>
+                    </div>
+                  </div>
+                ))
+            ) : (
+              <h1>malumot topilmadi</h1>
+            )}
+          </div>
         </div>
       ) : (
         <form onSubmit={handleSend}>
@@ -265,6 +364,14 @@ export default function Card() {
             value={inputValue.narx}
           />
           <input type="file" onChange={handleInputGetRasm} />
+
+          <select name="category" onChange={handleInputGetValue}>
+            <option value="">mevani tanlang</option>
+            <option value="meva">meva</option>
+            <option value="texnika">texnika</option>
+            <option value="poliz">poliz</option>
+            <option value="accessuar">accessuar</option>
+          </select>
           <button type="submit">send</button>
         </form>
       )}
